@@ -88,7 +88,7 @@ func main() {
 			}
 		case "-":
 			if IsRom && (x-y < 1) {
-				panic("Выдача паники, так как в римской системе счисления нет отрицательных чисел.")
+				panic("Выдача паники, так как в римской системе счисления нет отрицательных чисел и нуля.")
 			} else if IsRom && (x-y >= 1) {
 				fmt.Println(Arab2Roman(x - y))
 			} else {
@@ -101,8 +101,10 @@ func main() {
 				fmt.Println(x * y)
 			}
 		case "/":
-			if IsRom {
-				fmt.Println(Arab2Roman(x / y))
+			if IsRom && (x/y < 1) {
+				panic("Выдача паники, так как в римской системе счисления нет отрицательных чисел и нуля.")
+			} else if IsRom && (x/y > 1) {
+				fmt.Println(Arab2Roman(x - y))
 			} else {
 				fmt.Println(x / y)
 			}
