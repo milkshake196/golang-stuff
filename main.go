@@ -1,15 +1,14 @@
 package main
 
 import (
-	"fmt" // горит красным потому что неиспользован. браатииииш будь оптимизированнее
+	"fmt"
 	"strconv"
 	"strings"
 )
 
-// функция перевода из араб в рим
 func Arab2Roman(a int) string {
 	ans := ""
-	roms := [3]string{"X", "V", "I"}
+	roms := [5]string{"C", "L", "X", "V", "I"}
 	for a != 0 {
 		if a == 4 {
 			a -= 4
@@ -17,8 +16,17 @@ func Arab2Roman(a int) string {
 		} else if a == 9 {
 			a -= 9
 			ans += "IX"
+		} else if a == 45 {
+			a -= 45
+			ans += "XLV"
+		} else if a == 40 {
+			a -= 40
+			ans += "XL"
+		} else if a == 90 {
+			a -= 90
+			ans += "XC"
 		}
-		for i, value := range [3]int{10, 5, 1} {
+		for i, value := range [5]int{100, 50, 10, 5, 1} {
 			if a >= value {
 				a -= value
 				ans += roms[i]
@@ -29,30 +37,20 @@ func Arab2Roman(a int) string {
 	return ans
 }
 
-/*
-	else {
-		panic("Выдача паники, так как строка не является математической операцией.")
-	}
-*/
 func Roman2Arab(a string) int {
 	ans := 0
-	romanians := "IVX"
-	runes := []rune(romanians)
-	if a == "IV" {
-		ans += 4
-		return ans
-	} else if a == "IX" {
-		ans += 9
-		return ans
-	}
-	for _, value := range a {
-		if value == runes[0] {
-			ans += 1
-		} else if value == runes[1] {
-			ans += 5
-		} else if value == runes[2] {
-			ans += 10
+	var romanians = map[string]int{"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
+	if len(a) > 1 {
+		for i := 0; i < len(a)-1; i++ {
+			if romanians[string(a[i+1])] > romanians[string(a[i])] {
+				ans -= romanians[string(a[i])]
+			} else {
+				ans += romanians[string(a[i])]
+			}
 		}
+		ans += romanians[string(a[len(a)-1])]
+	} else {
+		ans += romanians[a]
 	}
 	return ans
 }
@@ -65,14 +63,11 @@ func main() {
 	} else if b == "" {
 		panic("Выдача паники, так как строка не является математической операцией.")
 	} else if strings.Contains(a, ".") || strings.Contains(b, ".") || strings.Contains(a, ",") || strings.Contains(b, ",") {
-		panic("Выдача паники, так как числа должны быть целые")
+		panic("Выдача паники, так как были использованы нецелые числа")
 	}
 	x, errx := strconv.Atoi(a)
 	y, erry := strconv.Atoi(b)
 	var IsRom bool
-	if errx == nil && erry == nil && (x > 10 || x < 1 || y > 10 || y < 1) {
-		panic("Выдача паники, так как числа должны быть от 1 до 10 включительно.")
-	}
 	if (Roman2Arab(a) > 0 && Roman2Arab(b) > 0) || (errx == nil && erry == nil) {
 		if Roman2Arab(a) > 0 {
 			x = Roman2Arab(a)
@@ -80,6 +75,9 @@ func main() {
 			IsRom = true
 		} else {
 			IsRom = false
+		}
+		if x > 10 || x < 1 || y > 10 || y < 1 {
+			panic("Выдача паники, так как числа должны быть от 1 до 10 включительно.")
 		}
 		switch op {
 		case "+":
@@ -110,6 +108,6 @@ func main() {
 			}
 		}
 	} else if (errx != nil || erry != nil) && (Roman2Arab(a) < 1 || Roman2Arab(b) < 1) {
-		panic("Выдача паники, так как используются одновременно разные системы счисления.")
+		panic("Выдача паники, так как не используются одновременно арабская или римская системы счисления.")
 	}
 }
